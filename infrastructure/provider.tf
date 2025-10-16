@@ -10,6 +10,5 @@ terraform {
 }
 
 provider "aws" {
-  region  = var.aws_region
-  # credentials supplied via OIDC role, environment, or profile
+  region = var.aws_region
 }
