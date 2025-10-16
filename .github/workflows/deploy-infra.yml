@@ -4,14 +4,14 @@ on:
   push:
     branches:
       - main
+    paths-ignore:
+      - "**.tfstate"
+      - "**.tfstate.encrypted"
   pull_request:
     branches:
       - main
   workflow_dispatch:
-  push:
-    paths-ignore:
-      - "**.tfstate"
-      - "**.tfstate.encrypted"
+    
 
 permissions:
   id-token: write     # Required for AWS OIDC authentication
