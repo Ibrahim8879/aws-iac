@@ -15,7 +15,8 @@ permissions:
 
 env:
   TF_VERSION: 1.6.6
-  AWS_REGION: ap-south-1
+  AWS_REGION: ap-south-1  # Change this to your desired AWS region
+  OIDC_ARN: arn:aws:iam::350276938231:role/github-iac   # Change this to your github OIDC ARN
 
 jobs:
   terraform:
@@ -35,7 +36,7 @@ jobs:
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          role-to-assume: arn:aws:iam::350276938231:role/github-iac
+          role-to-assume: ${{ env.OIDC_ARN }}
           aws-region: ${{ env.AWS_REGION }}
 
       # Setup Terraform
@@ -87,7 +88,7 @@ jobs:
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          role-to-assume: arn:aws:iam::350276938231:role/github-iac
+          role-to-assume: ${{ env.OIDC_ARN }}
           aws-region: ${{ env.AWS_REGION }}
 
       - name: Setup Terraform
