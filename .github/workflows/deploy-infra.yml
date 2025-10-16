@@ -8,6 +8,10 @@ on:
     branches:
       - main
   workflow_dispatch:
+  push:
+    paths-ignore:
+      - "**.tfstate"
+      - "**.tfstate.encrypted"
 
 permissions:
   id-token: write     # Required for AWS OIDC authentication
@@ -84,6 +88,14 @@ jobs:
           role-to-assume: ${{ env.OIDC_ARN }}
           aws-region: ${{ env.AWS_REGION }}
 
+      - name: Download Artifact
+        uses: badgerhobbs/terraform-state@v2
+        with:
+          operation: download
+          location: artifact
+          github_token: ${{ secrets.gh_access_token }}
+        continue-on-error: true
+
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
         with:
@@ -97,3 +109,10 @@ jobs:
 
       - name: Terraform Apply
         run: terraform apply -auto-approve "tfplan"
+
+      - name: Upload Artifact
+        uses: badgerhobbs/terraform-state@v2
+        with:
+          operation: upload
+          location: artifact
+          github_token: ${{ secrets.gh_access_token }}
