@@ -4,9 +4,6 @@ on:
   push:
     branches:
       - main
-    paths-ignore:
-      - "**.tfstate"
-      - "**.tfstate.encrypted"
   pull_request:
     branches:
       - main
@@ -88,12 +85,11 @@ jobs:
           role-to-assume: ${{ env.OIDC_ARN }}
           aws-region: ${{ env.AWS_REGION }}
 
-      - name: Download Artifact
-        uses: badgerhobbs/terraform-state@v2
+      - name: Download Terraform State
+        uses: actions/download-artifact@v4
         with:
-          operation: download
-          location: artifact
-          github_token: ${{ secrets.gh_access_token }}
+          name: terraform-state
+          path: ./infrastructure
         continue-on-error: true
 
       - name: Setup Terraform
@@ -105,14 +101,13 @@ jobs:
         run: terraform init -input=false
 
       - name: Terraform Plan
-        run: terraform plan -out=../terraform.tfstate -input=false
+        run: terraform plan -out=tfplan -input=false
 
       - name: Terraform Apply
-        run: terraform apply -auto-approve "../terraform.tfstate"
+        run: terraform apply -auto-approve "tfplan"
 
-      - name: Upload Artifact
-        uses: badgerhobbs/terraform-state@v2
+      - name: Upload Terraform State
+        uses: actions/upload-artifact@v4
         with:
-          operation: upload
-          location: artifact
-          github_token: ${{ secrets.gh_access_token }}
+          name: terraform-state
+          path: ./infrastructure/terraform.tfstate
