@@ -111,3 +111,4 @@ jobs:
         with:
           name: terraform-state
           path: ./infrastructure/terraform.tfstate
+          retention-days: 90
