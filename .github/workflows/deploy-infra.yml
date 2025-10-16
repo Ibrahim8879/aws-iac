@@ -18,6 +18,9 @@ env:
   TF_VERSION: 1.6.6
   AWS_REGION: ap-south-1  # Change this to your desired AWS region
   OIDC_ARN: arn:aws:iam::350276938231:role/github-iac   # Change this to your github OIDC ARN
+  STATE_BUCKET: github-iac-state-32323   # Update this to your S3 bucket name
+  STATE_KEY: terraform.tfstate
+
 
 jobs:
   terraform:
@@ -85,6 +88,10 @@ jobs:
           role-to-assume: ${{ env.OIDC_ARN }}
           aws-region: ${{ env.AWS_REGION }}
 
+      - name: Download Terraform state from S3
+        run: |
+          aws s3 cp s3://${{ env.STATE_BUCKET }}/${{ env.STATE_KEY }} ./terraform.tfstate || echo "No previous state found."
+
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
         with:
@@ -98,3 +105,7 @@ jobs:
 
       - name: Terraform Apply
         run: terraform apply -auto-approve "tfplan"
+
+      - name: Upload Terraform state to S3
+        run: |
+          aws s3 cp ./terraform.tfstate s3://${{ env.STATE_BUCKET }}/${{ env.STATE_KEY }} --acl private
