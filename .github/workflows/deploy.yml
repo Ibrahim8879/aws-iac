@@ -23,11 +23,11 @@ jobs:
       TF_STATE_BUCKET: terraform-state-storing-viego
 
     steps:
-      # 1️⃣ Checkout repository
+      # Checkout repository
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # 2️⃣ Configure AWS credentials (using OIDC or stored secrets)
+      # Configure AWS credentials (using OIDC or stored secrets)
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
@@ -35,13 +35,13 @@ jobs:
           role-to-assume: ${{ env.OIDC_ARN }}
           role-session-name: GitHubActionsTerraform
 
-      # 3️⃣ Setup Terraform
+      # Setup Terraform
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
         with:
           terraform_version: 1.9.5
 
-      # 4️⃣ Initialize Terraform (using S3 backend)
+      # Initialize Terraform (using S3 backend)
       - name: Terraform Init
         working-directory: ${{ env.TF_WORKING_DIR }}
         run: |
@@ -51,13 +51,13 @@ jobs:
             -backend-config="region=${{ env.AWS_REGION }}" \
             -backend-config="encrypt=true"
 
-      # 5️⃣ Terraform Plan
+      # Terraform Plan
       - name: Terraform Plan
         id: plan
         working-directory: ${{ env.TF_WORKING_DIR }}
         run: terraform plan -out=tfplan
       
-      # 6️⃣ Upload Plan File (optional but useful for reviewing)
+      # Upload Plan File (optional but useful for reviewing)
       - name: Upload Plan File
         uses: actions/upload-artifact@v4
         with:
@@ -65,7 +65,7 @@ jobs:
           path: ${{ env.TF_WORKING_DIR }}/tfplan
           retention-days: 
           
-      # 6️⃣ Terraform Apply (auto-approve)
+      # Terraform Apply (auto-approve)
       - name: Terraform Apply
         if: github.ref == 'refs/heads/main'
         working-directory: ${{ env.TF_WORKING_DIR }}
