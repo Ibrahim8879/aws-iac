@@ -1,15 +1,12 @@
-module "s3_bucket" {
-  source = "terraform-aws-modules/s3-bucket/aws"
-
+resource "aws_s3_bucket" "this" {
   bucket = var.bucket_name
-  acl    = var.bucket_acl
+  tags   = var.tags
+}
 
-  control_object_ownership = true
-  object_ownership         = var.object_ownership
+resource "aws_s3_bucket_versioning" "versioning" {
+  bucket = aws_s3_bucket.this.id
 
-  versioning = {
-    enabled = var.versioning_enabled
+  versioning_configuration {
+    status = var.versioning_enabled ? "Enabled" : "Suspended"
   }
-
-  tags = var.tags
 }
