@@ -17,7 +17,7 @@ jobs:
 
     env:
       TF_IN_AUTOMATION: true
-      TF_WORKING_DIR: environments/dev
+      TF_WORKING_DIR: infrastructure/environments/dev
       AWS_REGION: eu-central-1
       OIDC_ARN: arn:aws:iam::000338030864:role/test-roles #arn:aws:iam::000338030864:role/GitHubActions-IaC-DeployRole
       TF_STATE_BUCKET: terraform-state-storing-viego
